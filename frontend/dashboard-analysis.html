@@ -9,7 +9,30 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Google API Client -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+
+    <!-- Gmail Configuration -->
+    <script src="gmail-config.js"></script>
+
     <style>
+        :root {
+            --dashboard-bg: linear-gradient(180deg, #f6f8fc 0%, #eef2f8 100%);
+            --deep-blue: #213555;
+            --accent-blue: #4F709C;
+            --muted-blue: #627da0;
+            --panel-bg: #ffffff;
+            --panel-subtle-bg: #f4f6fb;
+            --panel-border: rgba(79, 112, 156, 0.18);
+            --panel-shadow: 0 12px 30px rgba(33, 53, 85, 0.08);
+        }
+
+        body.dashboard-modern {
+            background: var(--dashboard-bg);
+            color: var(--deep-blue);
+        }
+
         .dash-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
         .dash-sidebar { background:#1a2a48; border-right:1px solid rgba(255,255,255,0.14); padding:18px; position:sticky; top:0; height:100vh; }
         .dash-brand { display:flex; align-items:center; gap:10px; color:#fff; font-weight:800; letter-spacing:.2px; }
@@ -82,11 +105,13 @@
 
         .mode-panel {
             display: none;
-            background: #F5EFE7;
-            border: 1px solid rgba(79,112,156,0.2);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
             border-radius: 16px;
             padding: 32px;
             margin-bottom: 32px;
+            box-shadow: var(--panel-shadow);
+            color: var(--deep-blue);
         }
 
         .mode-panel.active {
@@ -239,9 +264,11 @@
         .loading-state {
             text-align: center;
             padding: 48px 32px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
             border-radius: 16px;
+            box-shadow: var(--panel-shadow);
+            color: var(--deep-blue);
         }
 
         .loading-spinner {
@@ -260,13 +287,12 @@
         }
 
         .loading-content h3 {
-            color: #fff;
+            color: var(--deep-blue);
             margin: 0 0 8px 0;
         }
 
         .loading-content p {
-            color: #EAF1FB;
-            opacity: 0.8;
+            color: var(--muted-blue);
             margin: 0 0 32px 0;
         }
 
@@ -283,9 +309,10 @@
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--panel-subtle-bg);
+            border: 1px solid rgba(79, 112, 156, 0.15);
             border-radius: 12px;
+            color: var(--deep-blue);
         }
 
         .step-icon {
@@ -294,17 +321,18 @@
 
         .step-text {
             flex: 1;
-            color: #EAF1FB;
+            color: var(--deep-blue);
             font-weight: 500;
         }
 
         .step-status {
-            color: #9fb4d3;
+            color: var(--muted-blue);
             font-size: 0.9rem;
         }
 
         .results-dashboard {
             margin-top: 32px;
+            color: var(--deep-blue);
         }
 
         .results-header {
@@ -317,7 +345,7 @@
         }
 
         .results-header h2 {
-            color: #fff;
+            color: var(--deep-blue);
             margin: 0;
         }
 
@@ -336,16 +364,18 @@
         .analysis-details,
         .email-details,
         .recent-history {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
             border-radius: 16px;
             padding: 24px;
+            box-shadow: var(--panel-shadow);
+            color: var(--deep-blue);
         }
 
         .chart-header h3,
         .analysis-details h3,
         .email-details h3 {
-            color: #fff;
+            color: var(--deep-blue);
             margin: 0 0 16px 0;
             font-size: 1.1rem;
         }
@@ -365,22 +395,23 @@
         .risk-score {
             font-size: 2rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--deep-blue);
         }
 
         .risk-level {
             font-size: 0.9rem;
-            color: #EAF1FB;
-            opacity: 0.8;
+            color: var(--muted-blue);
+            opacity: 1;
         }
 
         .alert-content {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--panel-subtle-bg);
+            border: 1px solid var(--panel-border);
             border-radius: 12px;
             padding: 16px;
             margin-top: 12px;
-            color: #EAF1FB;
+            color: var(--deep-blue);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         .breakdown-items {
@@ -395,8 +426,10 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px;
-            background: rgba(255,255,255,0.05);
+            background: var(--panel-subtle-bg);
             border-radius: 8px;
+            border: 1px solid rgba(79, 112, 156, 0.12);
+            color: var(--deep-blue);
         }
 
         .detail-grid {
@@ -408,20 +441,21 @@
 
         .detail-item {
             padding: 12px;
-            background: rgba(255,255,255,0.05);
+            background: var(--panel-subtle-bg);
             border-radius: 8px;
-            color: #EAF1FB;
+            color: var(--deep-blue);
+            border: 1px solid rgba(79, 112, 156, 0.12);
         }
 
         .detail-label {
             font-size: 0.9rem;
-            opacity: 0.7;
+            color: var(--muted-blue);
             margin-bottom: 4px;
         }
 
         .detail-value {
-            font-weight: 500;
-            color: #fff;
+            font-weight: 600;
+            color: var(--deep-blue);
         }
 
         .history-header {
@@ -432,7 +466,7 @@
         }
 
         .history-header h3 {
-            color: #fff;
+            color: var(--deep-blue);
             margin: 0;
         }
 
@@ -463,16 +497,18 @@
         /* Gmail email items */
         .gmail-email-item {
             padding: 16px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
             border-radius: 12px;
             margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: var(--panel-shadow);
+            color: var(--deep-blue);
         }
 
         .gmail-email-item:hover {
-            background: rgba(255,255,255,0.08);
+            background: var(--panel-subtle-bg);
             border-color: rgba(79,112,156,0.3);
             transform: translateY(-2px);
         }
@@ -485,8 +521,8 @@
         }
 
         .email-subject {
-            font-weight: 500;
-            color: #fff;
+            font-weight: 600;
+            color: var(--deep-blue);
             flex: 1;
         }
 
@@ -506,11 +542,12 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.9rem;
-            color: #9fb4d3;
+            color: var(--muted-blue);
         }
 
         .email-sender {
             font-weight: 500;
+            color: var(--deep-blue);
         }
 
         .email-date {
@@ -520,14 +557,16 @@
         /* History items */
         .history-item {
             padding: 12px;
-            background: rgba(255,255,255,0.05);
+            background: var(--panel-subtle-bg);
             border-radius: 8px;
             margin-bottom: 8px;
+            border: 1px solid rgba(79, 112, 156, 0.12);
+            color: var(--deep-blue);
         }
 
         .history-subject {
-            font-weight: 500;
-            color: #fff;
+            font-weight: 600;
+            color: var(--deep-blue);
             margin-bottom: 4px;
         }
 
@@ -546,13 +585,13 @@
         }
 
         .history-date {
-            color: #9fb4d3;
+            color: var(--muted-blue);
             opacity: 0.7;
         }
 
         .no-history {
             text-align: center;
-            color: #9fb4d3;
+            color: var(--muted-blue);
             opacity: 0.7;
             padding: 24px;
             font-style: italic;
@@ -594,7 +633,7 @@
         /* Breakdown items */
         .breakdown-value {
             font-size: 0.9rem;
-            color: #9fb4d3;
+            color: var(--muted-blue);
         }
 
         .error-message {
@@ -830,6 +869,7 @@ Your account has been suspended due to suspicious activity..."></textarea>
 
     <script src="firebase-config.js"></script>
     <script src="dashboard.js"></script>
+  <script src="chatbot.js?v=3"></script>
 </body>
 </html>
 

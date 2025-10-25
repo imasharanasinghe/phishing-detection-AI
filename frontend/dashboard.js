@@ -2,7 +2,7 @@
 let riskChart = null;
 let trendChart = null;
 let attackPatternsChart = null;
-const API_BASE = 'http://localhost:3000';
+const API_BASE = (window.API_BASE || 'http://localhost:3000').replace(/\/$/, '');
 let lastAnalysisResult = null;
 let currentAnalysisMode = 'manual';
 let currentHistoryFilters = {};
@@ -22,9 +22,19 @@ let gmailAccessToken = null;
 let gmailClient = null;
 
 // Google OAuth Configuration
-const GOOGLE_CLIENT_ID = GMAIL_CONFIG.CLIENT_ID;
-const GOOGLE_API_KEY = GMAIL_CONFIG.API_KEY;
-const GMAIL_SCOPES = GMAIL_CONFIG.SCOPES;
+const GMAIL_SETTINGS = typeof GMAIL_CONFIG !== 'undefined'
+    ? GMAIL_CONFIG
+    : {
+        CLIENT_ID: '',
+        API_KEY: '',
+        SCOPES: 'https://www.googleapis.com/auth/gmail.readonly',
+        DISCOVERY_DOC: 'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest',
+    };
+
+const GOOGLE_CLIENT_ID = GMAIL_SETTINGS.CLIENT_ID;
+const GOOGLE_API_KEY = GMAIL_SETTINGS.API_KEY;
+const GMAIL_SCOPES = GMAIL_SETTINGS.SCOPES;
+const GMAIL_DISCOVERY_DOC = GMAIL_SETTINGS.DISCOVERY_DOC;
 
 // Gmail OAuth setup
 function setupGmailIntegration() {
@@ -65,7 +75,7 @@ async function connectGmail() {
                 await gapi.client.init({
                     apiKey: GOOGLE_API_KEY,
                     clientId: GOOGLE_CLIENT_ID,
-                    discoveryDocs: [GMAIL_CONFIG.DISCOVERY_DOC],
+                    discoveryDocs: [GMAIL_DISCOVERY_DOC],
                     scope: GMAIL_SCOPES
                 });
                 
@@ -174,7 +184,7 @@ async function initializeGmailClient() {
             await gapi.client.init({
                 apiKey: GOOGLE_API_KEY,
                 clientId: GOOGLE_CLIENT_ID,
-                discoveryDocs: [GMAIL_CONFIG.DISCOVERY_DOC],
+                discoveryDocs: [GMAIL_DISCOVERY_DOC],
                 scope: GMAIL_SCOPES
             });
             
@@ -5833,8 +5843,17 @@ function createRiskChart(score, level) {
     
     // Update text display
     if (riskScoreEl) riskScoreEl.textContent = Math.round(score * 100);
-    if (riskLevelEl) riskLevelEl.textContent = level.toUpperCase();
-    
+    if (riskLevelEl) {
+        riskLevelEl.textContent = level.toUpperCase();
+        const palette = {
+            low: '#2f855a',
+            medium: '#b7791f',
+            high: '#c53030'
+        };
+        const normalized = (level || '').toLowerCase();
+        riskLevelEl.style.color = palette[normalized] || '#4F709C';
+    }
+
     // Destroy existing chart
     if (riskChart) {
         riskChart.destroy();

@@ -1,8 +1,8 @@
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from os import getenv
-import os
 from dotenv import load_dotenv
+import certifi
 
 # Load environment variables from .env file
 load_dotenv()
@@ -12,7 +12,13 @@ MONGO_URI = getenv("MONGODB_URL", "mongodb+srv://wijesinghesachithra_db_user:m1v
 DB_NAME = getenv("DATABASE_NAME", "phishing_ai")
 
 # Initialize MongoDB client
-client = AsyncIOMotorClient(MONGO_URI)
+
+tls_kwargs = {}
+if MONGO_URI.startswith("mongodb+srv://") or "tls=true" in MONGO_URI.lower() or "ssl=true" in MONGO_URI.lower():
+    tls_ca_file = getenv("MONGODB_TLS_CA_FILE") or certifi.where()
+    tls_kwargs["tlsCAFile"] = tls_ca_file
+
+client = AsyncIOMotorClient(MONGO_URI, **tls_kwargs)
 db = client[DB_NAME]
 
 async def get_db():

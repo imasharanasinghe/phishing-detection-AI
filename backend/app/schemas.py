@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List, Literal
 from datetime import datetime
 
 class AnalyzeRequest(BaseModel):
@@ -26,6 +26,20 @@ class EmailRecord(BaseModel):
     
     class Config:
         validate_by_name = True
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+    conversation: List[ChatMessage] = []
+    page_context: Optional[str] = None
+
+class ChatResponse(BaseModel):
+    reply: str
+    refused: bool = False
+
 
 class UserCreateRequest(BaseModel):
     uid: str = Field(..., description="Firebase user ID")

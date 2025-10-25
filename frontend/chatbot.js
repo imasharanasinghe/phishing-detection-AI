@@ -1,248 +1,318 @@
-// Chat Bot JavaScript
+const CHATBOT_API_BASE = window.API_BASE || 'http://localhost:3000';
+const CHAT_ENDPOINT = `${CHATBOT_API_BASE}/api/chat`;
+const SUGGESTED_QUESTIONS = [
+  'How do I analyze an email?',
+  'What does the risk score mean?',
+  'How do I connect Gmail?',
+  'Where can I see past analyses?',
+  'How do team members get added?'
+];
+const WELCOME_MESSAGE_TEXT = "Hi! I'm Aegis, the Phishing Detection AI assistant. Ask me about analyzing emails, threat reports, integrations, team access, or staying safe from phishing.";
+
 let chatBotOpen = false;
 let chatHistory = [];
+let isProcessing = false;
 
-// Knowledge base for site-related questions
-const knowledgeBase = {
-    'what is phishing': {
-        answer: 'Phishing is a cyber attack where criminals impersonate legitimate organizations to steal sensitive information like passwords, credit card numbers, or personal data. They often use fake emails, websites, or messages that look real.',
-        related: ['How does phishing work?', 'What are common phishing signs?']
-    },
-    'how does the ai work': {
-        answer: 'Our AI uses advanced machine learning algorithms to analyze emails in real-time. It examines patterns, sender reputation, content analysis, and behavioral indicators to detect phishing attempts with high accuracy.',
-        related: ['What makes our AI different?', 'How accurate is the detection?']
-    },
-    'is it free to use': {
-        answer: 'Yes! Our basic phishing detection service is completely free. You can analyze unlimited emails and get real-time protection. We also offer premium features for advanced users.',
-        related: ['What are the premium features?', 'How do I get started?']
-    },
-    'how accurate is the detection': {
-        answer: 'Our AI achieves over 95% accuracy in detecting phishing emails. It continuously learns from new threats and updates its detection patterns to stay ahead of evolving attack methods.',
-        related: ['How does it learn?', 'What if it makes a mistake?']
-    },
-    'what are common phishing signs': {
-        answer: 'Common signs include: urgent language ("act now"), suspicious sender addresses, requests for personal information, poor grammar/spelling, unexpected attachments, and links to unfamiliar websites.',
-        related: ['How can I protect myself?', 'What should I do if I receive a phishing email?']
-    },
-    'how can i protect myself': {
-        answer: 'Always verify sender identities, never click suspicious links, use strong passwords, enable two-factor authentication, keep software updated, and use our AI-powered detection tool for email analysis.',
-        related: ['What is two-factor authentication?', 'How do I report phishing?']
-    },
-    'how do i get started': {
-        answer: 'Getting started is easy! Click "Get Started" to create your free account, then you can immediately start analyzing emails for phishing threats. No credit card required.',
-        related: ['Do I need to download anything?', 'Can I use it on mobile?']
-    },
-    'what makes our ai different': {
-        answer: 'Our AI combines multiple detection methods: content analysis, sender reputation checking, behavioral pattern recognition, and real-time threat intelligence. It\'s specifically trained on phishing patterns.',
-        related: ['How does it compare to other tools?', 'Can it detect new threats?']
-    },
-    'can it detect new threats': {
-        answer: 'Yes! Our AI continuously learns from new phishing patterns and updates its detection algorithms. It can identify previously unknown threats based on behavioral patterns and content analysis.',
-        related: ['How often does it update?', 'What about zero-day attacks?']
-    },
-    'how do i report phishing': {
-        answer: 'You can report phishing emails directly through our platform. Just paste the suspicious email content and our system will analyze it. You can also forward phishing emails to report@phishing-detection-ai.com',
-        related: ['Will you notify others?', 'How long does analysis take?']
-    },
-    'do i need to download anything': {
-        answer: 'No downloads required! Our service works entirely in your web browser. You can also use our Chrome extension for seamless Gmail integration and automatic email analysis.',
-        related: ['How does the Chrome extension work?', 'Is it safe?']
-    },
-    'can i use it on mobile': {
-        answer: 'Absolutely! Our web interface is fully responsive and works great on mobile devices. You can analyze emails and access all features from your smartphone or tablet.',
-        related: ['Is there a mobile app?', 'How do I use it on mobile?']
-    },
-    'is it safe': {
-        answer: 'Yes, completely safe! We use enterprise-grade security, encrypt all data, and never store your personal information. Our Chrome extension only reads emails you specifically choose to analyze.',
-        related: ['What data do you collect?', 'How do you protect privacy?']
-    },
-    'what data do you collect': {
-        answer: 'We only collect email content you choose to analyze. We don\'t store personal information, passwords, or sensitive data. All analysis is done securely and anonymously.',
-        related: ['How do you protect privacy?', 'Can I delete my data?']
-    },
-    'how do you protect privacy': {
-        answer: 'We use end-to-end encryption, secure data centers, and strict privacy policies. Your email content is only used for analysis and is never shared with third parties.',
-        related: ['What is your privacy policy?', 'Can I opt out?']
-    }
-};
+(function initialiseChatbot() {
+  document.addEventListener('DOMContentLoaded', () => {
+    ensureChatWidget();
+    bindChatbot();
+    scheduleLandingPageNudge();
+  });
+})();
 
-// Initialize chat bot
-document.addEventListener('DOMContentLoaded', function() {
-    initializeChatBot();
-});
+function ensureChatWidget() {
+  if (document.getElementById('chatBotWidget')) {
+    initialiseWelcomeMessage();
+    return;
+  }
 
-function initializeChatBot() {
-    const toggle = document.getElementById('chatBotToggle');
-    const windowEl = document.getElementById('chatBotWindow');
-    const close = document.querySelector('.chatbot-close');
-    const sendBtn = document.getElementById('chatBotSend');
-    const input = document.getElementById('chatBotInput');
+  const widget = document.createElement('div');
+  widget.id = 'chatBotWidget';
+  widget.className = 'chatbot-widget';
+  widget.innerHTML = `
+    <div id="chatBotToggle" class="chatbot-toggle">
+      <div class="chatbot-icon">🤖</div>
+      <div class="chatbot-pulse"></div>
+    </div>
+    <div id="chatBotWindow" class="chatbot-window" style="display: none;">
+      <div class="chatbot-header">
+        <div class="chatbot-title">
+          <div class="chatbot-avatar">🤖</div>
+          <div class="chatbot-info">
+            <h4>AI Assistant</h4>
+            <span class="chatbot-status">Online</span>
+          </div>
+        </div>
+        <button class="chatbot-close" aria-label="Close chatbot">&times;</button>
+      </div>
+      <div class="chatbot-messages" id="chatBotMessages"></div>
+      <div class="chatbot-input">
+        <input type="text" id="chatBotInput" placeholder="Ask about phishing detection or the dashboard..." autocomplete="off" />
+        <button id="chatBotSend" class="chatbot-send-btn">Send</button>
+      </div>
+    </div>
+  `;
 
-    if (!toggle || !windowEl || !sendBtn || !input) {
-        return; // chatbot UI not present on this page
-    }
-
-    // Toggle chat bot
-    toggle.addEventListener('click', function() {
-        chatBotOpen = !chatBotOpen;
-        windowEl.style.display = chatBotOpen ? 'flex' : 'none';
-        
-        if (chatBotOpen) {
-            input.focus();
-        }
-    });
-
-    // Close chat bot
-    if (close) close.addEventListener('click', function() {
-        chatBotOpen = false;
-        windowEl.style.display = 'none';
-    });
-
-    // Send message
-    sendBtn.addEventListener('click', sendMessage);
-    input.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-    // Close on outside click
-    document.addEventListener('click', function(e) {
-        if (chatBotOpen && !windowEl.contains(e.target) && !toggle.contains(e.target)) {
-            chatBotOpen = false;
-            windowEl.style.display = 'none';
-        }
-    });
+  document.body.appendChild(widget);
+  initialiseWelcomeMessage();
 }
 
-function sendMessage() {
-    const input = document.getElementById('chatBotInput');
-    const message = input.value.trim();
-    
-    if (!message) return;
-    
-    // Add user message
-    addMessage(message, 'user');
-    input.value = '';
-    
-    // Show typing indicator
-    showTypingIndicator();
-    
-    // Process message after delay
-    setTimeout(() => {
-        hideTypingIndicator();
-        const response = getBotResponse(message);
-        addMessage(response, 'bot');
-    }, 1000 + Math.random() * 1000); // Random delay for realism
+function initialiseWelcomeMessage() {
+  const messagesContainer = document.getElementById('chatBotMessages');
+  if (!messagesContainer || messagesContainer.children.length > 0 || chatHistory.length > 0) {
+    return;
+  }
+
+  const suggestions = SUGGESTED_QUESTIONS.map((question) =>
+    `<button class="quick-btn" data-question="${escapeHTML(question)}">${escapeHTML(question)}</button>`
+  ).join('');
+
+  const welcomeHtml = `
+    <p>${escapeHTML(WELCOME_MESSAGE_TEXT)}</p>
+    <div class="quick-questions">${suggestions}</div>
+  `;
+
+  addMessage(welcomeHtml, 'bot', { html: true });
+  chatHistory.push({ role: 'assistant', content: WELCOME_MESSAGE_TEXT });
 }
 
-function addMessage(content, sender) {
-    const messagesContainer = document.getElementById('chatBotMessages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chatbot-message ${sender}-message`;
-    
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    
-    if (typeof content === 'string') {
-        contentDiv.innerHTML = `<p>${content}</p>`;
-    } else {
-        contentDiv.innerHTML = content;
+function bindChatbot() {
+  if (window.__chatBotInitialized) {
+    return;
+  }
+
+  const toggle = document.getElementById('chatBotToggle');
+  const windowEl = document.getElementById('chatBotWindow');
+  const closeBtn = document.querySelector('.chatbot-close');
+  const sendBtn = document.getElementById('chatBotSend');
+  const input = document.getElementById('chatBotInput');
+  const messagesContainer = document.getElementById('chatBotMessages');
+
+  if (!toggle || !windowEl || !sendBtn || !input || !messagesContainer) {
+    return;
+  }
+
+  toggle.addEventListener('click', () => {
+    chatBotOpen = !chatBotOpen;
+    windowEl.style.display = chatBotOpen ? 'flex' : 'none';
+    if (chatBotOpen) {
+      input.focus();
     }
-    
-    messageDiv.appendChild(contentDiv);
-    messagesContainer.appendChild(messageDiv);
-    
-    // Scroll to bottom
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    
-    // Store in history
-    chatHistory.push({ content, sender, timestamp: new Date() });
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      chatBotOpen = false;
+      windowEl.style.display = 'none';
+    });
+  }
+
+  sendBtn.addEventListener('click', () => handleOutgoingMessage());
+  input.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      handleOutgoingMessage();
+    }
+  });
+
+  messagesContainer.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.dataset.question) {
+      askQuickQuestion(target.dataset.question);
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!chatBotOpen) return;
+    const target = event.target;
+    if (!windowEl.contains(target) && !toggle.contains(target)) {
+      chatBotOpen = false;
+      windowEl.style.display = 'none';
+    }
+  });
+
+  window.__chatBotInitialized = true;
+}
+
+async function handleOutgoingMessage() {
+  if (isProcessing) {
+    return;
+  }
+
+  const input = document.getElementById('chatBotInput');
+  const message = input ? input.value.trim() : '';
+  if (!message) {
+    return;
+  }
+
+  addMessage(message, 'user');
+  chatHistory.push({ role: 'user', content: message });
+  input.value = '';
+  await requestAssistantResponse(message);
+}
+
+async function requestAssistantResponse(message) {
+  const sendBtn = document.getElementById('chatBotSend');
+  const input = document.getElementById('chatBotInput');
+
+  setProcessingState(true, sendBtn, input);
+  showTypingIndicator();
+
+  const priorMessages = chatHistory.slice(0, -1).slice(-8);
+  const payload = {
+    message,
+    conversation: priorMessages,
+    page_context: window.location.pathname
+  };
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  const token = window.localStorage ? localStorage.getItem('JWT') : null;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(CHAT_ENDPOINT, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const replyText = typeof data.reply === 'string' ? data.reply : 'I had trouble understanding that request.';
+
+    hideTypingIndicator();
+    addMessage(formatAssistantText(replyText), 'bot', { html: true });
+    chatHistory.push({ role: 'assistant', content: replyText });
+
+    if (data.refused) {
+      // Keep suggestions visible if we refused to answer
+      addFollowUpPrompt();
+    }
+  } catch (error) {
+    console.error('Chat assistant error:', error);
+    hideTypingIndicator();
+    addMessage(
+      'I\'m having trouble connecting to the assistant right now. Please try again shortly or email support@phishing-detection-ai.com.',
+      'bot'
+    );
+    const last = chatHistory[chatHistory.length - 1];
+    if (last && last.role === 'user' && last.content === message) {
+      chatHistory.pop();
+    }
+  } finally {
+    setProcessingState(false, sendBtn, input);
+  }
+}
+
+function addFollowUpPrompt() {
+  const messagesContainer = document.getElementById('chatBotMessages');
+  if (!messagesContainer) return;
+  const suggestions = SUGGESTED_QUESTIONS.map((question) =>
+    `<button class=\"quick-btn\" data-question=\"${escapeHTML(question)}\">${escapeHTML(question)}</button>`
+  ).join('');
+  addMessage(`<p>Here are a few things I can help with:</p><div class=\"quick-questions\">${suggestions}</div>`, 'bot', { html: true });
+}
+
+function addMessage(content, sender, options = {}) {
+  const { html = false } = options;
+  const messagesContainer = document.getElementById('chatBotMessages');
+  if (!messagesContainer) {
+    return;
+  }
+
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `chatbot-message ${sender}-message`;
+
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'message-content';
+
+  if (html) {
+    contentDiv.innerHTML = content;
+  } else {
+    contentDiv.textContent = content;
+  }
+
+  messageDiv.appendChild(contentDiv);
+  messagesContainer.appendChild(messageDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 function showTypingIndicator() {
-    const messagesContainer = document.getElementById('chatBotMessages');
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'chatbot-message bot-message typing-indicator';
-    typingDiv.id = 'typingIndicator';
-    
-    typingDiv.innerHTML = `
-        <div class="message-content">
-            <div class="typing-indicator">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            </div>
-        </div>
-    `;
-    
-    messagesContainer.appendChild(typingDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  const messagesContainer = document.getElementById('chatBotMessages');
+  if (!messagesContainer) {
+    return;
+  }
+
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'chatbot-message bot-message typing-indicator';
+  typingDiv.id = 'typingIndicator';
+  typingDiv.innerHTML = `
+    <div class="message-content">
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+  `;
+  messagesContainer.appendChild(typingDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 function hideTypingIndicator() {
-    const typingIndicator = document.getElementById('typingIndicator');
-    if (typingIndicator) {
-        typingIndicator.remove();
-    }
+  const typingIndicator = document.getElementById('typingIndicator');
+  if (typingIndicator) {
+    typingIndicator.remove();
+  }
 }
 
-function getBotResponse(message) {
-    const lowerMessage = message.toLowerCase();
-    
-    // Check for exact matches first
-    for (const [key, data] of Object.entries(knowledgeBase)) {
-        if (lowerMessage.includes(key)) {
-            let response = data.answer;
-            
-            // Add related questions if available
-            if (data.related && data.related.length > 0) {
-                response += '<div class="quick-questions">';
-                data.related.forEach(question => {
-                    response += `<button class="quick-btn" onclick="askQuickQuestion('${question}')">${question}</button>`;
-                });
-                response += '</div>';
-            }
-            
-            return response;
-        }
-    }
-    
-    // Check for keywords
-    if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('money')) {
-        return 'Our basic service is completely free! You can analyze unlimited emails at no cost. Premium features are available for advanced users.';
-    }
-    
-    if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
-        return 'I\'m here to help! You can ask me about phishing detection, how our AI works, pricing, security features, or anything else about our service. What would you like to know?';
-    }
-    
-    if (lowerMessage.includes('contact') || lowerMessage.includes('email')) {
-        return 'You can reach our support team at support@phishing-detection-ai.com or use our contact form. We typically respond within 24 hours.';
-    }
-    
-    if (lowerMessage.includes('thank') || lowerMessage.includes('thanks')) {
-        return 'You\'re welcome! I\'m happy to help. Is there anything else you\'d like to know about phishing detection or our service?';
-    }
-    
-    // Default response
-    return 'I understand you\'re asking about "' + message + '". While I have extensive knowledge about phishing detection and our service, I might not have specific information about that topic. Could you try rephrasing your question or ask about our core features like AI detection, security, or how to get started?';
+function escapeHTML(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatAssistantText(text) {
+  const safe = escapeHTML(text);
+  return safe.replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+}
+
+function setProcessingState(active, button, input) {
+  isProcessing = active;
+  if (button) {
+    button.disabled = active;
+  }
+  if (input) {
+    input.disabled = active;
+  }
 }
 
 function askQuickQuestion(question) {
-    const input = document.getElementById('chatBotInput');
-    input.value = question;
-    sendMessage();
+  const input = document.getElementById('chatBotInput');
+  if (!input) {
+    return;
+  }
+  input.value = question;
+  handleOutgoingMessage();
 }
 
-// Auto-open chat bot after 10 seconds on landing page
-setTimeout(() => {
-    if (!chatBotOpen && window.location.pathname.includes('index.html')) {
-        // Show a subtle notification
-        const toggle = document.getElementById('chatBotToggle');
-        toggle.style.animation = 'chatbotPulse 1s ease-in-out 3';
+function scheduleLandingPageNudge() {
+  setTimeout(() => {
+    const toggle = document.getElementById('chatBotToggle');
+    if (!chatBotOpen && toggle && window.location.pathname.includes('index.html')) {
+      toggle.style.animation = 'chatbotPulse 1s ease-in-out 3';
     }
-}, 10000);
+  }, 10000);
+}
 
-// Export functions for global access
 window.askQuickQuestion = askQuickQuestion;

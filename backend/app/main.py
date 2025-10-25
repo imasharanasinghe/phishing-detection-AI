@@ -14,6 +14,7 @@ from app.reports_routes import router as reports_router
 from app.team_routes import router as team_router
 from app.integrations_routes import router as integrations_router
 from app.billing_routes import router as billing_router
+from app.chat_routes import router as chat_router
 from datetime import datetime
 from typing import List, Optional
 import logging
@@ -28,16 +29,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-allowed_origins = [
-    "http://localhost:8081",
-    "http://127.0.0.1:8081",
-    "http://localhost",
-    "http://127.0.0.1",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origin_regex=r"http://(\[[0-9a-fA-F:]+\]|localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,6 +46,7 @@ app.include_router(reports_router, prefix="/api", tags=["reports"])
 app.include_router(team_router, prefix="/api", tags=["team"])
 app.include_router(integrations_router, prefix="/api", tags=["integrations"])
 app.include_router(billing_router, prefix="/api", tags=["billing"])
+app.include_router(chat_router, prefix="/api", tags=["chat"])
 
 @app.get("/api/health")
 async def health():
