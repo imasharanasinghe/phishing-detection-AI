@@ -1,4 +1,6 @@
-# Python
+# ==========================================================
+# 🐍 PYTHON
+# ==========================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -22,24 +24,65 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-
-# Virtual environments
-.env
-.venv
+*.pyc
+*.pyo
+*.pyd
+.Python
 env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ==========================================================
+# 🔒 VIRTUAL ENVIRONMENTS
+# ==========================================================
+.env
+.venv/
 venv/
 ENV/
 env.bak/
 venv.bak/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# IDE
+# ==========================================================
+# 🗄️ DATABASE & CONFIGURATION
+# ==========================================================
+config.env
+*.env
+.env.*
+firebase-service-account.json
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================================
+# 🧪 TESTING & DEVELOPMENT
+# ==========================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+test-results/
+test-reports/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ==========================================================
+# 🛠️ DEVELOPMENT TOOLS
+# ==========================================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
 .DS_Store?
 ._*
@@ -47,22 +90,150 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Logs
-*.log
-logs/
-
-# Environment variables
-.env
-config.env
-*.env
-
-# Firebase
-firebase-service-account.json
-
-# Node modules (if any)
-node_modules/
-
-# Temporary files
 *.tmp
 *.temp
+*.bak
+*.backup
+
+# ==========================================================
+# 📝 LOGS & DEBUGGING
+# ==========================================================
+*.log
+logs/
+debug.log
+error.log
+access.log
+*.log.*
+
+# ==========================================================
+# 🌐 WEB DEVELOPMENT
+# ==========================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+.cache/
+.parcel-cache/
+
+# ==========================================================
+# 🚀 DEPLOYMENT & BUILD
+# ==========================================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+
+# ==========================================================
+# 📊 DATA & MEDIA (Optional - uncomment if you want to exclude)
+# ==========================================================
+# *.mp4
+# *.avi
+# *.mov
+# *.wmv
+# *.flv
+# *.webm
+# *.mkv
+# *.mp3
+# *.wav
+# *.flac
+# *.aac
+# *.ogg
+
+# ==========================================================
+# 🔐 SECURITY & SECRETS
+# ==========================================================
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+.secrets/
+private/
+.private/
+
+# ==========================================================
+# 📱 MOBILE & DESKTOP
+# ==========================================================
+*.apk
+*.ipa
+*.dmg
+*.exe
+*.msi
+*.deb
+*.rpm
+
+# ==========================================================
+# 🎯 PROJECT SPECIFIC
+# ==========================================================
+# Development scripts
+create-env.bat
+create-env.sh
+setup-*.sh
+run_servers.bat
+run.sh
+
+# Test files
+test_*.py
+*_test.py
+tests/
+test-*.html
+test-*.js
+
+# Development documentation
+BACKEND_API_COMPLETE.md
+DATABASE_SETUP.md
+FINAL_SUCCESS.md
+FIREBASE_SETUP.md
+GMAIL_SETUP.md
+SETUP_COMPLETE.md
+SETUP_SUCCESS.md
+
+# Development tools
+dev/
+demo/
+*.sample.*
+
+# Backup files
+requirements.txt.bak
+*.bak
+*.backup
+
+# ==========================================================
+# 🏗️ BUILD ARTIFACTS
+# ==========================================================
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# ==========================================================
+# 📦 PACKAGE MANAGERS
+# ==========================================================
+# Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node.js
+package-lock.json
+yarn.lock
+
+# ==========================================================
+# 🔄 VERSION CONTROL
+# ==========================================================
+.svn/
+.hg/
+.bzr/
+.git/
