@@ -18,6 +18,7 @@ from app.chat_routes import router as chat_router
 from datetime import datetime
 from typing import List, Optional
 import logging
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -29,9 +30,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Get allowed origins from environment or use default
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*")
+
+if allowed_origins == "*":
+    # Allow all origins for development/deployment
+    allow_origin_regex = r".*"
+else:
+    # Use specific origins from environment
+    allow_origin_regex = allowed_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://(\[[0-9a-fA-F:]+\]|localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=allow_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

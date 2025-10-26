@@ -4,11 +4,27 @@ services:
     name: phishing-detection-ai-backend
     env: python
     plan: free
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 3000
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: MONGO_URI
         sync: false
-      - key: DB_NAME
+      - key: DATABASE_NAME
         value: phishing_ai
+      - key: MONGODB_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: GROQ_API
+        sync: false
+      - key: FIREBASE_CREDENTIALS_PATH
+        value: firebase-service-account.json
     rootDir: backend
