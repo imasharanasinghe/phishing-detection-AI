@@ -1,28 +1,44 @@
+
+---
+
 # Phishing Detection AI
+<p align="center">
+  <img src="assets/thumbnail.png" alt="Phishing Detection AI" width="1000">
+</p>
 
-🛡️ **AI-Powered Phishing Detection System** - A comprehensive full-stack application that uses machine learning and rule-based analysis to detect phishing emails in real-time.
 
-## 🚀 Features
+## Overview
+
+**Phishing Detection AI** is a full-stack application that leverages artificial intelligence and rule-based analysis to identify phishing emails in real time. The system integrates natural language processing (NLP) and machine learning (ML) techniques to provide accurate, automated risk assessments with clear visual reporting.
+
+---
+
+## Features
 
 ### Core Functionality
-- **AI Email Analysis**: Advanced ML algorithms to analyze email content
-- **Real-time Detection**: Instant phishing risk assessment
-- **Risk Scoring**: Comprehensive scoring system (Low/Medium/High)
-- **Alert Generation**: Automated alert summaries with detailed explanations
+
+* **AI-Driven Email Analysis**: Detects phishing attempts using NLP and ML algorithms.
+* **Real-Time Detection**: Performs instant analysis and provides risk scores.
+* **Comprehensive Scoring**: Categorizes emails as *Low*, *Medium*, or *High* risk.
+* **Automated Alerts**: Generates detailed explanations and alert summaries.
 
 ### Frontend
-- **Modern Web Interface**: Clean, responsive design
-- **Firebase Authentication**: Secure user management
-- **Dashboard Analytics**: Visual analytics and reporting
-- **Chrome Extension**: Gmail integration for seamless protection
+
+* **Responsive Web Interface**: Built with clean, modern UI components.
+* **Secure Authentication**: Integrated with Firebase for user management.
+* **Interactive Dashboard**: Displays analytics, detection trends, and risk summaries.
+* **Browser Extension**: Seamlessly integrates with Gmail via a Chrome extension.
 
 ### Backend
-- **FastAPI Framework**: High-performance Python API
-- **MongoDB Integration**: Scalable database storage
-- **RESTful API**: Comprehensive API endpoints
-- **Real-time Processing**: Async email analysis
 
-## 🏗️ Architecture
+* **FastAPI Framework**: Provides high-performance asynchronous API endpoints.
+* **MongoDB Integration**: Stores user data and email analysis results efficiently.
+* **RESTful Architecture**: Ensures modular, scalable API design.
+* **Real-Time Processing**: Handles concurrent email analyses asynchronously.
+
+---
+
+## System Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -30,100 +46,92 @@
 │   (Port 8081)   │◄──►│   (Port 3000)   │◄──►│   MongoDB       │
 │                 │    │                 │    │                 │
 │ • HTML/CSS/JS   │    │ • FastAPI       │    │ • Email Records │
-│ • Firebase Auth │    │ • AI Analysis  │    │ • User Data     │
-│ • Dashboard     │    │ • ML Models    │    │ • Analytics     │
+│ • Firebase Auth │    │ • AI Analysis   │    │ • User Data     │
+│ • Dashboard     │    │ • ML Models     │    │ • Analytics     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## 🛠️ Tech Stack
+---
 
-### Backend
-- **Python 3.13+**
-- **FastAPI** - Modern web framework
-- **Uvicorn** - ASGI server
-- **MongoDB** - NoSQL database
-- **Motor** - Async MongoDB driver
-- **spaCy** - NLP processing
-- **scikit-learn** - Machine learning
-- **BeautifulSoup** - HTML parsing
+## Technology Stack
 
-### Frontend
-- **HTML5/CSS3/JavaScript**
-- **Firebase** - Authentication & hosting
-- **Chrome Extension API** - Browser integration
+| Category     | Technologies                                                                       |
+| ------------ | ---------------------------------------------------------------------------------- |
+| **Backend**  | Python 3.13+, FastAPI, Uvicorn, MongoDB, Motor, spaCy, scikit-learn, BeautifulSoup |
+| **Frontend** | HTML5, CSS3, JavaScript, Firebase, Chrome Extension API                            |
+| **AI / ML**  | Natural Language Processing, Rule-based Detection, Multi-Factor Risk Scoring       |
 
-### AI/ML
-- **Natural Language Processing** - Email content analysis
-- **Rule-based Detection** - Pattern matching
-- **Risk Scoring Algorithm** - Multi-factor analysis
-- **Alert Generation** - Automated summaries
+---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Python 3.13+
-- MongoDB (local or Atlas)
-- Node.js (for Chrome extension)
 
-### Installation
+* Python 3.13+
+* MongoDB (local or Atlas)
+* Node.js (for Chrome extension development)
+
+### Installation Steps
 
 1. **Clone the repository**
-```bash
-git clone https://github.com/imasharanasinghe/phishing-detection-AI.git
-cd phishing-detection-AI
-```
 
-2. **Backend Setup**
-```bash
-cd backend
-pip install -r requirements.txt
-```
+   ```bash
+   git clone https://github.com/imasharanasinghe/phishing-detection-AI.git
+   cd phishing-detection-AI
+   ```
 
-3. **Environment Configuration**
-```bash
-# Copy and configure environment variables
-cp env.example config.env
-# Edit config.env with your MongoDB and API keys
-```
+2. **Install backend dependencies**
 
-4. **Start Servers**
-```bash
-# Windows
-run_servers.bat
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
 
-# Manual start
-# Backend (Terminal 1)
-cd backend
-python -m uvicorn app.main:app --host 127.0.0.1 --port 3000 --reload
+3. **Configure environment variables**
 
-# Frontend (Terminal 2)
-cd frontend
-python -m http.server 8081
-```
+   ```bash
+   cp env.example config.env
+   # Edit config.env with MongoDB credentials and API keys
+   ```
+
+4. **Run servers**
+
+   ```bash
+   # Backend (Terminal 1)
+   cd backend
+   python -m uvicorn app.main:app --host 127.0.0.1 --port 3000 --reload
+
+   # Frontend (Terminal 2)
+   cd frontend
+   python -m http.server 8081
+   ```
 
 ### Access Points
-- **Frontend**: http://localhost:8081
-- **Backend API**: http://localhost:3000
-- **API Docs**: http://localhost:3000/docs
 
-## 📊 API Endpoints
+* Frontend: [http://localhost:8081](http://localhost:8081)
+* Backend API: [http://localhost:3000](http://localhost:3000)
+* API Documentation: [http://localhost:3000/docs](http://localhost:3000/docs)
 
-### Core Analysis
-- `POST /api/analyze` - Analyze email for phishing risk
-- `GET /api/emails` - Retrieve analyzed emails
-- `GET /api/stats` - Get analysis statistics
+---
 
-### Authentication
-- `POST /api/auth/google` - Google OAuth authentication
-- `GET /api/auth/me` - Get current user info
+## API Endpoints
 
-### User Management
-- `POST /api/users` - Create/update user
-- `GET /api/users/{uid}` - Get user by ID
+| Category            | Method | Endpoint           | Description                     |
+| ------------------- | ------ | ------------------ | ------------------------------- |
+| **Analysis**        | `POST` | `/api/analyze`     | Analyze email for phishing risk |
+|                     | `GET`  | `/api/emails`      | Retrieve analyzed emails        |
+|                     | `GET`  | `/api/stats`       | Get analysis statistics         |
+| **Authentication**  | `POST` | `/api/auth/google` | Google OAuth login              |
+|                     | `GET`  | `/api/auth/me`     | Retrieve user information       |
+| **User Management** | `POST` | `/api/users`       | Create or update user           |
+|                     | `GET`  | `/api/users/{uid}` | Retrieve user by ID             |
 
-## 🔧 Configuration
+---
+
+## Configuration
 
 ### Environment Variables
+
 ```env
 # MongoDB
 MONGODB_URL=mongodb+srv://...
@@ -136,85 +144,98 @@ SECRET_KEY=your-secret-key
 FIREBASE_API_KEY=your-api-key
 FIREBASE_AUTH_DOMAIN=your-domain
 
-# API Settings
+# API
 API_PORT=3000
 FRONTEND_ORIGIN=http://localhost:8081
 ```
 
-## 🧪 Testing
+---
+
+## Testing
 
 ### Backend Tests
+
 ```bash
 cd backend
-python -m pytest tests/
+pytest tests/
 ```
 
 ### API Testing
-```bash
-# Health check
-curl http://localhost:3000/api/health
 
-# Analyze email
+```bash
 curl -X POST http://localhost:3000/api/analyze \
   -H "Content-Type: application/json" \
-  -d '{"email_text": "Your email content here"}'
+  -d '{"email_text": "Example email content"}'
 ```
 
-## 📱 Chrome Extension
+---
 
-### Installation
-1. Open Chrome Extensions (`chrome://extensions/`)
-2. Enable "Developer mode"
-3. Click "Load unpacked"
+## Chrome Extension
+
+**Installation**
+
+1. Open Chrome and navigate to `chrome://extensions/`
+2. Enable **Developer Mode**
+3. Click **Load unpacked**
 4. Select the `chrome_extension` folder
 
-### Features
-- Gmail integration
-- Real-time email analysis
-- Popup interface for quick checks
+**Key Features**
 
-## 🚀 Deployment
+* Gmail integration for real-time phishing detection
+* Inline email scanning and alerts
+* Quick access popup interface
 
-### Docker
+---
+
+## Deployment
+
+| Platform             | Usage                     |
+| -------------------- | ------------------------- |
+| **Vercel / Netlify** | Frontend hosting          |
+| **Render / Railway** | Backend deployment        |
+| **Docker**           | Containerized local setup |
+
 ```bash
 docker-compose up -d
 ```
 
-### Cloud Platforms
-- **Vercel**: Frontend hosting
-- **Render**: Backend deployment
-- **Netlify**: Static site hosting
+---
 
-## 📈 Performance
+## Performance Metrics
 
-- **Response Time**: < 200ms average
-- **Throughput**: 1000+ requests/minute
-- **Accuracy**: 95%+ phishing detection rate
-- **Uptime**: 99.9% availability
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **spaCy** - Natural language processing
-- **FastAPI** - Modern web framework
-- **Firebase** - Authentication and hosting
-- **MongoDB** - Database solution
-
-## 📞 Support
-
-For support, email sachithrakaushika228@gmail.com or create an issue in this repository.
+| Metric                | Value                     |
+| --------------------- | ------------------------- |
+| Average Response Time | < 200 ms                  |
+| Throughput            | 1000+ requests per minute |
+| Detection Accuracy    | 95%+                      |
+| System Uptime         | 99.9%                     |
 
 ---
 
-**Made with ❤️ for cybersecurity and AI innovation**
+## Contributing
+
+1. Fork the repository.
+2. Create a new branch:
+
+   ```bash
+   git checkout -b feature/your-feature
+   ```
+3. Commit your changes and push to the branch.
+4. Submit a pull request for review.
+
+---
+
+## License
+
+This project is distributed under the **MIT License**.
+See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Contact
+
+**Author:** Imasha Ranasinghe
+**Email:** [imaranasinghe2002@gmail.com](mailto:imaranasinghe2002@gmail.com)
+**GitHub:** [github.com/imasharanasinghe](https://github.com/imasharanasinghe)
+
+---
