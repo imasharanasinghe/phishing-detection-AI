@@ -221,7 +221,7 @@ docker-compose up -d
    git checkout -b feature/your-feature
    ```
 3. Commit your changes and push to the branch.
-4. Submit a pull request for review.
+4. Send in a pull request for review.
 
 ---
 
